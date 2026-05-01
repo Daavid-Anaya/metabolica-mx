@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../features/home/presentation/main_shell.dart';
+import '../features/calculator/presentation/test_view.dart';
 
 // Placeholder screens
 class PlaceholderScreen extends StatelessWidget {
@@ -20,7 +22,11 @@ final router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const PlaceholderScreen('Inicio'),
+      builder: (context, state) => const MainShell(),
+    ),
+    GoRoute(
+      path: '/test',
+      builder: (context, state) => const TestView(),
     ),
     GoRoute(
       path: '/login',

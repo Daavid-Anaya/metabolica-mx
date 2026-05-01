@@ -8,8 +8,7 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.accent,
-        background: AppColors.bg,
-        surface: AppColors.surface,
+        surface: AppColors.bg,
         onSurface: AppColors.text,
         primary: AppColors.accent,
         secondary: AppColors.accent2,
@@ -21,7 +20,7 @@ class AppTheme {
         bodyColor: AppColors.text,
         displayColor: AppColors.text,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.card,
         elevation: 2,
         shape: RoundedRectangleBorder(

@@ -95,3 +95,106 @@ const List<TerritorialVariable> territorialVariables = [
       isInverse: false,
       description: "CONAPO normalizado"),
 ];
+
+// ─── Variables IARM ───────────────────────────────────────────────────────────
+// Los 4 factores del IARM — todos de riesgo DIRECTO: mayor valor = mayor riesgo.
+
+class IarmVariable {
+  final String key;
+  final String label;
+  final String icon;
+  final int colorValue;
+  final String description;
+
+  const IarmVariable({
+    required this.key,
+    required this.label,
+    required this.icon,
+    required this.colorValue,
+    required this.description,
+  });
+}
+
+const List<IarmVariable> iarmVariables = [
+  IarmVariable(
+    key: "ST",
+    label: "Sedentarismo Territorial",
+    icon: "🪑",
+    colorValue: 0xFFEF4444,
+    description: "% población sin actividad física en la zona",
+  ),
+  IarmVariable(
+    key: "BAV",
+    label: "Baja Área Verde",
+    icon: "🏜️",
+    colorValue: 0xFFF97316,
+    description: "Déficit de m² de área verde por habitante",
+  ),
+  IarmVariable(
+    key: "DEN",
+    label: "Alta Densidad Poblacional",
+    icon: "🏙️",
+    colorValue: 0xFFF59E0B,
+    description: "Hab/km² normalizado respecto al máximo municipal",
+  ),
+  IarmVariable(
+    key: "BEA",
+    label: "Bajo Equipamiento Activo",
+    icon: "🚫",
+    colorValue: 0xFF8B5CF6,
+    description: "Déficit de instalaciones deportivas / 10k hab",
+  ),
+];
+
+// ─── Recomendaciones IARM ─────────────────────────────────────────────────────
+// Acciones e intervenciones según nivel de riesgo del IARM.
+
+class IarmRecommendation {
+  final String icon;
+  final int colorValue;
+  final String title;
+  final List<String> items;
+
+  const IarmRecommendation({
+    required this.icon,
+    required this.colorValue,
+    required this.title,
+    required this.items,
+  });
+}
+
+const Map<String, IarmRecommendation> iarmRecommendations = {
+  'Bajo riesgo ambiental': IarmRecommendation(
+    icon: '✅',
+    colorValue: 0xFF22C55E,
+    title: 'Entorno favorable — mantener y reforzar',
+    items: [
+      'Documentar las buenas prácticas de diseño urbano existentes.',
+      'Promover la actividad física espontánea aprovechando la infraestructura actual.',
+      'Participar en programas de mantenimiento de áreas verdes y equipamiento.',
+    ],
+  ),
+  'Riesgo medio': IarmRecommendation(
+    icon: '🟡',
+    colorValue: 0xFFF59E0B,
+    title: 'Intervención preventiva recomendada',
+    items: [
+      'Identificar los 2 factores con peor puntaje y priorizar su mejora.',
+      'Gestionar ante autoridades la ampliación de áreas verdes en déficit.',
+      'Proponer rutas peatonales seguras para reducir sedentarismo territorial.',
+      'Revisar densificación urbana y su impacto en calidad de vida activa.',
+    ],
+  ),
+  'Alto riesgo': IarmRecommendation(
+    icon: '🚨',
+    colorValue: 0xFFEF4444,
+    title: 'Alerta — intervención urgente requerida',
+    items: [
+      'Gestión urgente de equipamiento deportivo: al menos 2 unidades barriales.',
+      'Plan emergente de áreas verdes: mínimo 1 parque de bolsillo por colonia.',
+      'Reducción de densidad en nuevos desarrollos mediante normativa.',
+      'Programa municipal de activación física con incentivos comunitarios.',
+      'Diagnóstico participativo con residentes para co-diseñar intervenciones.',
+    ],
+  ),
+};

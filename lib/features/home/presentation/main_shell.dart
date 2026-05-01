@@ -6,7 +6,6 @@ import 'package:metabolica_mx/features/home/presentation/home_view.dart';
 import 'package:metabolica_mx/features/calculator/presentation/calculator_view.dart';
 import 'package:metabolica_mx/features/recommendations/presentation/recommendations_view.dart';
 import 'package:metabolica_mx/features/map/presentation/map_view.dart';
-import 'package:flutter/material.dart';
 import '../../../config/app_colors.dart';
 
 final navigationProvider = StateProvider<int>((ref) => 0);
@@ -61,19 +60,6 @@ class MainShell extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _Placeholder extends StatelessWidget {
-  final String title;
-  const _Placeholder(this.title);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(child: Text('Pantalla: $title')),
     );
   }
 }

@@ -1,30 +1,30 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import '../data/auth_repository.dart';
 
 final authRepositoryProvider = Provider((ref) => AuthRepository());
 
 enum AuthStatus { authenticated, unauthenticated, loading, error }
 
-class AuthState {
+class AppAuthState {
   final AuthStatus status;
-  final User? user;
+  final sb.User? user;
   final String? errorMessage;
 
-  AuthState({
+  AppAuthState({
     required this.status,
     this.user,
     this.errorMessage,
   });
 
-  factory AuthState.initial() => AuthState(status: AuthStatus.loading);
+  factory AppAuthState.initial() => AppAuthState(status: AuthStatus.loading);
 
-  AuthState copyWith({
+  AppAuthState copyWith({
     AuthStatus? status,
-    User? user,
+    sb.User? user,
     String? errorMessage,
   }) {
-    return AuthState(
+    return AppAuthState(
       status: status ?? this.status,
       user: user ?? this.user,
       errorMessage: errorMessage ?? this.errorMessage,
@@ -32,29 +32,29 @@ class AuthState {
   }
 }
 
-class AuthNotifier extends StateNotifier<AuthState> {
+class AuthNotifier extends StateNotifier<AppAuthState> {
   final AuthRepository _repository;
 
-  AuthNotifier(this._repository) : super(AuthState.initial()) {
+  AuthNotifier(this._repository) : super(AppAuthState.initial()) {
     _init();
   }
 
   void _init() {
     final user = _repository.currentUser;
     if (user != null) {
-      state = AuthState(status: AuthStatus.authenticated, user: user);
+      state = AppAuthState(status: AuthStatus.authenticated, user: user);
     } else {
-      state = AuthState(status: AuthStatus.unauthenticated);
+      state = AppAuthState(status: AuthStatus.unauthenticated);
     }
 
     _repository.authStateChanges.listen((data) {
       final event = data.event;
       final session = data.session;
 
-      if (event == AuthChangeEvent.signedIn || event == AuthChangeEvent.tokenRefreshed) {
-        state = AuthState(status: AuthStatus.authenticated, user: session?.user);
-      } else if (event == AuthChangeEvent.signedOut) {
-        state = AuthState(status: AuthStatus.unauthenticated);
+      if (event == sb.AuthChangeEvent.signedIn || event == sb.AuthChangeEvent.tokenRefreshed) {
+        state = AppAuthState(status: AuthStatus.authenticated, user: session?.user);
+      } else if (event == sb.AuthChangeEvent.signedOut) {
+        state = AppAuthState(status: AuthStatus.unauthenticated);
       }
     });
   }
@@ -63,7 +63,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
     try {
       await _repository.signIn(email: email, password: password);
-    } on AuthException catch (e) {
+    } on sb.AuthException catch (e) {
       state = state.copyWith(status: AuthStatus.unauthenticated, errorMessage: e.message);
     } catch (e) {
       state = state.copyWith(status: AuthStatus.unauthenticated, errorMessage: 'Ocurrió un error inesperado');
@@ -84,7 +84,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         name: name,
         municipality: municipality,
       );
-    } on AuthException catch (e) {
+    } on sb.AuthException catch (e) {
       state = state.copyWith(status: AuthStatus.unauthenticated, errorMessage: e.message);
     } catch (e) {
       state = state.copyWith(status: AuthStatus.unauthenticated, errorMessage: 'Ocurrió un error inesperado');
@@ -96,6 +96,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 }
 
-final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+final authProvider = StateNotifierProvider<AuthNotifier, AppAuthState>((ref) {
   return AuthNotifier(ref.watch(authRepositoryProvider));
 });

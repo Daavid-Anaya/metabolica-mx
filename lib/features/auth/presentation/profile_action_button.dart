@@ -9,7 +9,17 @@ class ProfileActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () => context.push('/profile'),
-      icon: const Icon(Icons.account_circle_outlined, color: AppColors.accent),
+      icon: Container(
+        width: 32,
+        height: 32,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.accent.withValues(alpha: 0.1),
+          shape: BoxShape.circle,
+          border: Border.all(color: AppColors.accent.withValues(alpha: 0.2)),
+        ),
+        child: const Icon(Icons.account_circle_outlined, color: AppColors.accent),
+      ),
     );
   }
 }

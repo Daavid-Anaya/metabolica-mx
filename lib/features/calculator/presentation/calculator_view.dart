@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../config/app_colors.dart';
 import '../../../core/app_data.dart';
 import '../../../core/iarri_logic.dart';
+import '../../auth/presentation/profile_action_button.dart';
 import 'calculator_controller.dart';
 
 class CalculatorView extends ConsumerWidget {
@@ -14,7 +16,12 @@ class CalculatorView extends ConsumerWidget {
     final notifier = ref.read(calculatorProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Calculadora IARRI & IARM')),
+      appBar: AppBar(
+        title: const Text('Calculadora IARRI & IARM'),
+        actions: [
+          ProfileActionButton(),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(

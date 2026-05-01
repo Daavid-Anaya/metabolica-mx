@@ -2,20 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../features/home/presentation/main_shell.dart';
 import '../features/calculator/presentation/test_view.dart';
-
-// Placeholder screens
-class PlaceholderScreen extends StatelessWidget {
-  final String title;
-  const PlaceholderScreen(this.title, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(child: Text('Pantalla: $title')),
-    );
-  }
-}
+import '../features/auth/presentation/login_view.dart';
+import '../features/auth/presentation/register_view.dart';
+import '../features/auth/presentation/profile_view.dart';
 
 final router = GoRouter(
   initialLocation: '/',
@@ -30,7 +19,15 @@ final router = GoRouter(
     ),
     GoRoute(
       path: '/login',
-      builder: (context, state) => const PlaceholderScreen('Login'),
+      builder: (context, state) => const LoginView(),
+    ),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterView(),
+    ),
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfileView(),
     ),
   ],
 );

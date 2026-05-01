@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../config/app_colors.dart';
 import '../../../core/iarri_logic.dart';
+import '../../auth/presentation/profile_action_button.dart';
 import '../../calculator/presentation/calculator_controller.dart';
 import '../domain/recommendations.dart';
 
@@ -42,6 +43,9 @@ class RecommendationsView extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Intervención & Recomendaciones'),
+        actions: [
+          const ProfileActionButton(),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

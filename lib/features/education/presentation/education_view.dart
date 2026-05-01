@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../config/app_colors.dart';
 import '../domain/education_data.dart';
 import 'education_controller.dart';
+import '../../auth/presentation/profile_action_button.dart';
 
 // ─── ROUTER PRINCIPAL ─────────────────────────────────────────────────────────
 
@@ -55,6 +56,9 @@ class _HomeView extends ConsumerWidget {
             fontSize: 18,
           ),
         ),
+        actions: const [
+          ProfileActionButton(),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -352,11 +356,11 @@ class _MicrocourseCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(
-                                '+${mc.totalXp} XP disponibles',
+                                '+${mc.totalXp} XP dispo',
                                 style: TextStyle(
                                   color: color,
                                   fontSize: 11,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ),

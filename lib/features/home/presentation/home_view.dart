@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../config/app_colors.dart';
 import '../../../core/iarri_logic.dart';
 import '../../../core/app_data.dart';
+import '../../auth/presentation/profile_action_button.dart';
 import 'home_controller.dart';
 
 class HomeView extends ConsumerWidget {
@@ -42,6 +43,7 @@ class HomeView extends ConsumerWidget {
           ],
         ),
         actions: [
+          ProfileActionButton(),
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: Container(

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:metabolica_mx/features/education/presentation/education_view.dart';
+import 'package:metabolica_mx/features/gamification/presentation/gamification_view.dart';
 import 'package:metabolica_mx/features/home/presentation/home_view.dart';
 import 'package:metabolica_mx/features/calculator/presentation/calculator_view.dart';
 import 'package:metabolica_mx/features/recommendations/presentation/recommendations_view.dart';
-import 'package:metabolica_mx/features/education/presentation/education_view.dart';
+import 'package:metabolica_mx/features/map/presentation/map_view.dart';
+import 'package:flutter/material.dart';
 import '../../../config/app_colors.dart';
 
 final navigationProvider = StateProvider<int>((ref) => 0);
@@ -17,11 +20,11 @@ class MainShell extends ConsumerWidget {
 
     final screens = [
       const HomeView(),
-      const _Placeholder('Mapa'),
+      const MapView(),
       const CalculatorView(),
       const RecommendationsView(),
       const EducationView(),
-      const _Placeholder('Retos'),
+      const GamificationView(),
     ];
 
     return Scaffold(

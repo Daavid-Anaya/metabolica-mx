@@ -14,4 +14,11 @@ class AppColors {
   static const Color text = Color(0xFF1E293B);
   static const Color muted = Color(0xFF64748B);
   static const Color white = Color(0xFFFFFFFF);
+
+  // Brand Colors - ARQ-Metabólica
+  static const Color greenDark = Color(0xFF1B5E20);
+  static const Color greenMedium = Color(0xFF2E7D32);
+  static const Color greenLight = Color(0xFF66BB6A);
+  static const Color softWhite = Color(0xFFE8F5E9);
+  static const Color errorLight = Color(0xFFFF8A80);
 }

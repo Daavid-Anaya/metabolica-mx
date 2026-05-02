@@ -28,6 +28,16 @@ class AuthRepository {
         'municipality': municipality,
       },
     );
+
+    if (response.user != null) {
+      // Create profile record
+      await _supabase.from('perfiles').insert({
+        'id': response.user!.id,
+        'nombre': name,
+        'municipio_actual': municipality,
+      });
+    }
+
     return response;
   }
 

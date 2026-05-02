@@ -66,7 +66,7 @@ class AuthNotifier extends StateNotifier<AppAuthState> {
     } on sb.AuthException catch (e) {
       state = state.copyWith(status: AuthStatus.unauthenticated, errorMessage: e.message);
     } catch (e) {
-      state = state.copyWith(status: AuthStatus.unauthenticated, errorMessage: 'Ocurrió un error inesperado');
+      state = state.copyWith(status: AuthStatus.unauthenticated, errorMessage: 'Error: ${e.toString()}');
     }
   }
 
@@ -87,7 +87,7 @@ class AuthNotifier extends StateNotifier<AppAuthState> {
     } on sb.AuthException catch (e) {
       state = state.copyWith(status: AuthStatus.unauthenticated, errorMessage: e.message);
     } catch (e) {
-      state = state.copyWith(status: AuthStatus.unauthenticated, errorMessage: 'Ocurrió un error inesperado');
+      state = state.copyWith(status: AuthStatus.unauthenticated, errorMessage: 'Error: ${e.toString()}');
     }
   }
 

@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/gamification_data.dart';
+import '../../profile/data/profile_repository.dart';
+import '../../auth/presentation/auth_controller.dart';
 
 class GamificationState {
   final int xp;
@@ -8,6 +10,7 @@ class GamificationState {
   final Map<String, bool> unlockedBadges;
   final bool iarriGuardado;
   final int microcursosCompletados;
+  final bool isLoading;
 
   GamificationState({
     required this.xp,
@@ -16,6 +19,7 @@ class GamificationState {
     required this.unlockedBadges,
     this.iarriGuardado = false,
     this.microcursosCompletados = 0,
+    this.isLoading = false,
   });
 
   factory GamificationState.initial() {
@@ -36,6 +40,7 @@ class GamificationState {
     Map<String, bool>? unlockedBadges,
     bool? iarriGuardado,
     int? microcursosCompletados,
+    bool? isLoading,
   }) {
     return GamificationState(
       xp: xp ?? this.xp,
@@ -44,14 +49,56 @@ class GamificationState {
       unlockedBadges: unlockedBadges ?? this.unlockedBadges,
       iarriGuardado: iarriGuardado ?? this.iarriGuardado,
       microcursosCompletados: microcursosCompletados ?? this.microcursosCompletados,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 }
 
 class GamificationNotifier extends StateNotifier<GamificationState> {
-  GamificationNotifier() : super(GamificationState.initial());
+  final ProfileRepository _repository;
+  final Ref _ref;
 
-  void toggleStep(String challengeId, int stepIndex) {
+  GamificationNotifier(this._repository, this._ref) : super(GamificationState.initial()) {
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    final user = _ref.read(authProvider).user;
+    if (user == null) return;
+
+    state = state.copyWith(isLoading: true);
+    final profile = await _repository.getProfile(user.id);
+    if (profile != null) {
+      state = state.copyWith(
+        xp: profile.xp,
+        completedChallenges: profile.completedChallenges,
+        unlockedBadges: profile.unlockedBadges,
+        microcursosCompletados: profile.microcursosCompletados,
+        isLoading: false,
+      );
+    } else {
+      state = state.copyWith(isLoading: false);
+    }
+  }
+
+  Future<void> _syncWithSupabase() async {
+    final user = _ref.read(authProvider).user;
+    if (user == null) return;
+
+    final profile = UserProfile(
+      id: user.id,
+      displayName: user.userMetadata?['display_name'] ?? 'Usuario',
+      municipality: user.userMetadata?['municipality'] ?? '',
+      xp: state.xp,
+      completedChallenges: state.completedChallenges,
+      unlockedBadges: state.unlockedBadges,
+      microcursosCompletados: state.microcursosCompletados,
+    );
+
+    await _repository.updateProfile(profile);
+  }
+
+  void toggleStep(String challengeId, int stepIndex) async {
     final challenge = weeklyChallenges.firstWhere((c) => c.id == challengeId);
     final progress = List<bool>.from(state.challengeProgress[challengeId]!);
     
@@ -81,16 +128,19 @@ class GamificationNotifier extends StateNotifier<GamificationState> {
     );
     
     _checkBadges();
+    await _syncWithSupabase();
   }
 
-  void setIarriGuardado(bool value) {
+  void setIarriGuardado(bool value) async {
     state = state.copyWith(iarriGuardado: value);
     _checkBadges();
+    await _syncWithSupabase();
   }
 
-  void setMicrocursosCompletados(int count) {
+  void setMicrocursosCompletados(int count) async {
     state = state.copyWith(microcursosCompletados: count);
     _checkBadges();
+    await _syncWithSupabase();
   }
 
   void _checkBadges() {
@@ -132,6 +182,8 @@ class GamificationNotifier extends StateNotifier<GamificationState> {
   }
 }
 
+final profileRepositoryProvider = Provider((ref) => ProfileRepository());
+
 final gamificationProvider = StateNotifierProvider<GamificationNotifier, GamificationState>((ref) {
-  return GamificationNotifier();
+  return GamificationNotifier(ref.watch(profileRepositoryProvider), ref);
 });

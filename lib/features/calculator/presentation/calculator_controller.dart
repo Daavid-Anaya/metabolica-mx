@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/iarri_logic.dart';
 import '../../home/presentation/main_shell.dart';
+import '../data/results_repository.dart';
+import '../../auth/presentation/auth_controller.dart';
+import '../../gamification/presentation/gamification_controller.dart';
 
 class CalculatorState {
   final Map<String, double> iarriValues;
@@ -57,8 +60,10 @@ class CalculatorState {
 }
 
 class CalculatorNotifier extends StateNotifier<CalculatorState> {
+  final ResultsRepository _repository;
   final Ref _ref;
-  CalculatorNotifier(this._ref) : super(CalculatorState.initial());
+
+  CalculatorNotifier(this._repository, this._ref) : super(CalculatorState.initial());
 
   void setIarriValue(String key, double value) {
     final newValues = Map<String, double>.from(state.iarriValues);
@@ -98,18 +103,52 @@ class CalculatorNotifier extends StateNotifier<CalculatorState> {
   }
 
   Future<void> saveResult() async {
+    final user = _ref.read(authProvider).user;
+    if (user == null) return;
+
     state = state.copyWith(isSaving: true);
     
-    // TODO: Real Supabase persistence
-    await Future.delayed(const Duration(seconds: 1));
-    
-    state = state.copyWith(isSaving: false);
-    
-    // Auto-navigate to Intervención tab (index 3)
-    _ref.read(navigationProvider.notifier).state = 3;
+    // Get municipality from current profile
+    final profile = await _ref.read(profileRepositoryProvider).getProfile(user.id);
+    final municipio = profile?.municipality ?? 'Sin especificar';
+
+    final iarri = IARRILogic.calculateIARRI(
+      av: state.iarriValues['AV']!,
+      ic: state.iarriValues['IC']!,
+      ed: state.iarriValues['ED']!,
+      ear: state.iarriValues['EAR']!,
+      imp: state.iarriValues['IMP']!,
+    );
+    final probRi = IARRILogic.calculateProbRI(iarri);
+
+    final result = IarriResult(
+      userId: user.id,
+      municipio: municipio,
+      iarri: iarri,
+      probRi: probRi,
+      iarriValues: state.iarriValues,
+      iarmValues: state.iarmValues,
+      createdAt: DateTime.now(),
+    );
+
+    try {
+      await _repository.saveResult(result);
+      
+      // Update gamification state
+      _ref.read(gamificationProvider.notifier).setIarriGuardado(true);
+      
+      state = state.copyWith(isSaving: false);
+      
+      // Auto-navigate to Intervención tab (index 3)
+      _ref.read(navigationProvider.notifier).state = 3;
+    } catch (e) {
+      state = state.copyWith(isSaving: false);
+    }
   }
 }
 
+final resultsRepositoryProvider = Provider((ref) => ResultsRepository());
+
 final calculatorProvider = StateNotifierProvider<CalculatorNotifier, CalculatorState>((ref) {
-  return CalculatorNotifier(ref);
+  return CalculatorNotifier(ref.watch(resultsRepositoryProvider), ref);
 });
